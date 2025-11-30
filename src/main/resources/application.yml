@@ -1,0 +1,127 @@
+gallery:
+  security:
+    open-endpoints:
+      - /api/auth/login
+      - /api/auth/refresh
+      - /api/auth/password
+    protected-services:
+      user-service-url: ${USER_SERVICE_URL:http://user-service:8080}
+    jwt:
+      access-expiration: 5m
+      refresh-expiration: 3d
+      active-session-limit: 10
+
+spring:
+  application:
+    name: Authentication-Service
+
+  datasource:
+    url: ${AUTHENTICATION_DB_URL:jdbc:postgresql://postgres-auth:5432/auth_db}
+    username: ${AUTHENTICATION_DB_USER:testUser}
+    password: ${AUTHENTICATION_DB_PASSWORD:testPassword}
+    hikari:
+      connection-timeout: 5000
+      max-lifetime: 500000
+      maximum-pool-size: 10
+
+  liquibase:
+    enabled: true
+
+  data:
+    jdbc:
+      dialect: postgresql
+
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: 6379
+      database: 0
+      username: ${REDIS_USER:testRedisUser}
+      password: ${REDIS_PASSWORD:testRedisUserPassword}
+      client-type: lettuce
+      connect-timeout: 2s
+      timeout: 2s
+      repositories:
+        enabled: false
+      lettuce:
+        pool:
+          max-wait: 2s
+
+  cache:
+    type: redis
+    cache-names: users
+    redis:
+      time-to-live: 5m
+      cache-null-values: false
+
+  task:
+    scheduling:
+      threadNamePrefix: Authentication-Service-Scheduling-Thread-
+      pool:
+        size: 1
+      shutdown:
+        await-termination: true
+        await-termination-period: PT10S
+
+  ssl:
+    bundle:
+      pem:
+        token-signing-pair:
+          keystore:
+            certificate: "file:/app/certs/auth-server.pem"
+            private-key: "file:/app/certs/auth-server.key"
+
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+  web:
+    resources:
+      add-mappings: false
+
+---
+#Configuration for dev profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5433/auth_db
+  data:
+    redis:
+      host: localhost
+
+  ssl:
+    bundle:
+      pem:
+        token-signing-pair:
+          keystore:
+            certificate: classpath:/keys/auth-server.pem
+            private-key: classpath:/keys/auth-server.key
+
+gallery:
+  security:
+    protected-services:
+      user-service-url: http://localhost:8081
+
+server:
+  port: 8080
+
+---
+#Configuration for smoke test run
+spring:
+  config:
+    activate:
+      on-profile: smoke
+  liquibase:
+    enabled: false
+  sql:
+    init:
+      mode: never
+  datasource:
+    hikari:
+      allow-pool-suspension: true
+  data:
+    redis:
+      lettuce:
+        pool:
+          enabled: false
