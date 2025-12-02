@@ -1,9 +1,15 @@
 gallery:
   security:
     open-endpoints:
-      - /api/auth/login
-      - /api/auth/refresh
-      - /api/auth/password
+      - path: /api/auth/login
+        method.name: POST
+      - path: /api/auth/refresh
+        method.name: POST
+    internal-endpoints:
+      - path: /api/auth/validate
+        method.name: POST
+      - path: /api/auth/password
+        method.name: POST
     protected-services:
       user-service-url: ${USER_SERVICE_URL:http://user-service:8080}
     jwt:
@@ -69,7 +75,6 @@ spring:
           keystore:
             certificate: "file:/app/certs/auth-server.pem"
             private-key: "file:/app/certs/auth-server.key"
-
 
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
