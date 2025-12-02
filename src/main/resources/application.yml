@@ -98,10 +98,12 @@ spring:
 gallery:
   security:
     open-endpoints:
-      - /api/auth/v3/*
-      - /api/auth/login
-      - /api/auth/refresh
-      - /api/auth/password
+      - path: /api/auth/v3/*
+        method.name: GET
+      - path: /api/auth/login
+        method.name: POST
+      - path: /api/auth/refresh
+        method.name: POST
 springdoc:
   api-docs:
     enabled: true
