@@ -2,6 +2,7 @@ package kektor.innowise.gallery.authentication.controller;
 
 
 import jakarta.validation.Valid;
+import kektor.innowise.gallery.authentication.controller.openapi.AuthenticationServiceOpenApi;
 import kektor.innowise.gallery.authentication.dto.LoginRequest;
 import kektor.innowise.gallery.authentication.dto.LogoutRequest;
 import kektor.innowise.gallery.authentication.dto.RefreshRequest;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
-public class AuthenticationController {
+public class AuthenticationController implements AuthenticationServiceOpenApi {
 
     final TokenService tokenService;
     final PasswordService passwordService;
@@ -34,6 +35,7 @@ public class AuthenticationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         return ResponseEntity.ok()
                 .body(tokenService.login(loginRequest));
@@ -43,6 +45,7 @@ public class AuthenticationController {
             path = "/logout",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<Void> logout(@RequestBody @Valid LogoutRequest logoutRequest) {
         tokenService.logout(logoutRequest);
         return ResponseEntity.ok().build();
@@ -52,6 +55,7 @@ public class AuthenticationController {
             path = "/validate",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<Void> validate(@RequestBody @Valid ValidateRequest validateRequest) {
         if (tokenService.validate(validateRequest))
             return ResponseEntity.ok().build();
@@ -64,6 +68,7 @@ public class AuthenticationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<TokenResponse> refreshToken(@RequestBody @Valid RefreshRequest refreshRequest) {
         return ResponseEntity.ok()
                 .body(tokenService.refresh(refreshRequest));
@@ -73,6 +78,7 @@ public class AuthenticationController {
             path = "/password",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
+    @Override
     public ResponseEntity<Void> storePassword(@RequestBody @Valid StorePasswordRequest passwordRequest) {
         passwordService.storeUserPassword(passwordRequest);
         return ResponseEntity.ok().build();
