@@ -89,6 +89,29 @@ springdoc:
   api-docs:
     enabled: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      discovery:
+        enabled: false
+    access:
+      default: none
+    jmx:
+      exposure:
+        exclude: "*"
+  endpoint:
+    health:
+      access: read_only
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState, diskSpace, db
+
 ---
 #Configuration for openapi
 spring:
@@ -159,3 +182,10 @@ spring:
       lettuce:
         pool:
           enabled: false
+  ssl:
+    bundle:
+      pem:
+        token-signing-pair:
+          keystore:
+            certificate: ~
+            private-key: ~
