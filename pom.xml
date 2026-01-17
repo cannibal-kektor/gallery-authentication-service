@@ -12,6 +12,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <openapi-filename>auth-service-openapi.yaml</openapi-filename>
+        <openapi-docs-url>api/auth/v3/api-docs.yaml</openapi-docs-url>
+    </properties>
+
     <repositories>
         <repository>
             <id>github</id>
@@ -85,6 +90,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
